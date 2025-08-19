@@ -658,6 +658,69 @@ public class TestMocks {
                     .scheduleExpression("cron(0 6 * * ? *)")));
   }
 
+  public static PojaConf6 getValidPojaConf6WithSecrets(
+      ComputeConf2.FrontalFunctionInvocationMethodEnum invocationMethodEnum) {
+    String humanReadableValuePojaVersion = POJA_6.toHumanReadableValue();
+    return new PojaConf6()
+        .version(humanReadableValuePojaVersion)
+        .general(
+            new GeneralPojaConf6()
+                .appName("test-app")
+                .packageFullName("com.test.api")
+                .withSnapstart(false)
+                .customJavaDeps(List.of())
+                .customJavaEnvVars(
+                    List.of(
+                        new EnvVars().name("TEST_SECRET").value("sk_live_secret").testValue("test-secret-value-123"),
+                        new EnvVars().name("EMPTY_SECRET").value("sk_live_empty").testValue("")))
+                .customJavaRepositories(List.of())
+                .environmentType(PREPROD))
+        .database(new DatabaseConf2().withDatabase(DatabaseConf2.WithDatabaseEnum.NONE))
+        .emailing(new MailingConf().sesSource("mail@mail.com"))
+        .genApiClient(
+            new GenApiClientConf()
+                .awsAccountId(null)
+                .tsClientDefaultOpenapiServerUrl(null)
+                .tsClientApiUrlEnvVarName(null)
+                .codeartifactRepositoryName(null)
+                .codeartifactDomainName(null))
+        .integration(
+            new IntegrationConf()
+                .withSentry(false)
+                .withSwaggerUi(false)
+                .withSonar(false)
+                .withFileStorage(false)
+                .withCodeql(false))
+        .compute(
+            new ComputeConf2()
+                .frontalMemory(BigDecimal.valueOf(1024))
+                .frontalFunctionTimeout(BigDecimal.valueOf(600))
+                .frontalFunctionInvocationMethod(invocationMethodEnum)
+                .worker1Memory(BigDecimal.valueOf(512))
+                .worker2Memory(BigDecimal.valueOf(513))
+                .worker1Batch(BigDecimal.valueOf(5))
+                .worker2Batch(BigDecimal.valueOf(6))
+                .withQueuesNb(NUMBER_2)
+                .workerFunction1Timeout(BigDecimal.valueOf(600))
+                .apiGatewayTimeout(BigDecimal.valueOf(30000))
+                .workerFunction2Timeout(BigDecimal.valueOf(700)))
+        .concurrency(
+            new ConcurrencyConf2()
+                .frontalReservedConcurrentExecutionsNb(5)
+                .worker1ReservedConcurrentExecutionsNb(5)
+                .worker2ReservedConcurrentExecutionsNb(5))
+        .testing(
+            new TestingConf().jacocoMinCoverage(BigDecimal.valueOf(0.2)).javaFacadeIt("FacadeIT"))
+        .scheduledTasks(
+            List.of(
+                new ScheduledTask()
+                    .name("ScheduledTask1")
+                    .description("some scheduled task")
+                    .className("classname")
+                    .eventStackSource(_1)
+                    .scheduleExpression("cron(0 6 * * ? *)")));
+  }
+
   public static List<StackEvent> permStackEvents() {
     StackEvent createInProgress =
         new StackEvent()
