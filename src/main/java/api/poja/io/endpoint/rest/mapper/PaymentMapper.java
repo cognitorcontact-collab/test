@@ -1,0 +1,18 @@
+package api.poja.io.endpoint.rest.mapper;
+
+import api.poja.io.endpoint.rest.model.PaymentMethod;
+import org.springframework.stereotype.Component;
+
+@Component
+public class PaymentMapper {
+  public PaymentMethod toRest(com.stripe.model.PaymentMethod domain) {
+    com.stripe.model.PaymentMethod.Card card = domain.getCard();
+    return new PaymentMethod()
+        .id(domain.getId())
+        .expMonth(Math.toIntExact(card.getExpMonth()))
+        .expYear(Math.toIntExact(card.getExpYear()))
+        .type(domain.getType())
+        .brand(card.getBrand())
+        .last4(card.getLast4());
+  }
+}
